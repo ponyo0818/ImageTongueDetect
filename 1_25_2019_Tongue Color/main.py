@@ -3,7 +3,7 @@
 Created on Fri Jan 25 08:56:39 2019
 To discover the patterns in the data of TongueColor
 and make prediction of the color of Tongue using ML models
-of linearRegression, SVM, and Xgbox.
+of linearRegression, SVM, and Xgboost.
 
 
 鉴定结果（Label）	
@@ -30,6 +30,8 @@ from sklearn import svm
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn import linear_model
+from xgboost import XGBClassifier
+
 
 def main():
     dataPath='C:\\Users\\FY\\Desktop\\TongueColorDetectYfang\\1_25_2019_Tongue Color\\TongueColor.csv'
@@ -39,7 +41,7 @@ def main():
     DataSummary(tongueColor)
     LogReg(tongueColor)
     SupportVectorMachine(tongueColor)
-    
+    Xgboost(tongueColor)
     
 def DataSummary(tongueColor):
     #count the number of each type
@@ -73,12 +75,12 @@ def LogReg(tongueColor):
     print ('Accuray of logistic regression classifier on test set:{:.2f}'.format(logreg.score(X_test,y_test)))
     
     #Find the accuracy of the svm classifier using X_test and y_test
-    print('Accuracy of SVC classifier on test set: {:.2f}'
+    print('Accuracy of logistic Regression classifier on test set: {:.2f}'
          .format(logreg.score(X_test,y_test)))
     
     
     #Find the accuracy of the svm classifier on trainning set
-    print('Accuracy of SVC classifier on training set: {:.2f}'
+    print('Accuracy of logistic Regression classifier on training set: {:.2f}'
          .format(logreg.score(X_train,y_train)))
     
     
@@ -129,11 +131,44 @@ def SupportVectorMachine(tongueColor):
     plt.title("SVM types vs Predicted types:$Y_i$ vs $\hat{Y}_i$" )
     plt.savefig('svm')
     
+"""Accuracy of Xgboost classifier on test set: 0.91
+Accuracy of Xgboost classifier on training set: 0.94"""
+def Xgboost(tongueColor):
+    #CLASSIFIER
+    #Read the data and the lebel
+    X = tongueColor.loc[:,'danbai':'danzi'] #pandas DataFrame
+    y = tongueColor['label'] #pandas Series
+    
+    #split X and y into trainning and test sets
+    
+    #75%/25% train-test split
+    X_train, X_test, y_train, y_test=train_test_split(X,y,random_state=0)
+    
+    #Using SVM classifier and fit the classifier with the train dataset
+    xb=XGBClassifier()
+    xb.fit(X_train,y_train)
+    
+    #Using the svm classifier to predict for the test set
+    y_pred=xb.predict(X_test)
+    print('number of sample been predicted: ',len(y_pred))
 
-# =============================================================================
-# def Xgbox():
-#     
-# =============================================================================
+    #Find the accuracy of the svm classifier using X_test and y_test
+    print('Accuracy of Xgboost classifier on test set: {:.2f}'
+         .format(xb.score(X_test,y_test)))
+    
+    
+    #Find the accuracy of the svm classifier on trainning set
+    print('Accuracy of Xgboost classifier on training set: {:.2f}'
+         .format(xb.score(X_train,y_train)))
+    
+    print('number of sample been predicted: ',len(y_pred))
+    #plot the scatter plot to compare true types and the predicted types.
+    plt.scatter(y_test,xb.predict(X_test),alpha=0.1,s=70)
+    plt.xlabel("type: $Y_i$")
+    plt.ylabel("Predicted tyep: $\hat{Y}_i$")
+    plt.title("Xgboost types vs Predicted types:$Y_i$ vs $\hat{Y}_i$" )
+    plt.savefig('xgboost')
+    
     
 if __name__ == "__main__":
     main()
