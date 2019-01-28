@@ -109,6 +109,7 @@ def SupportVectorMachine(tongueColor):
     #Using SVM classifier and fit the classifier with the train dataset
     clf=svm.SVC()
     clf.fit(X_train,y_train)
+    print (clf)
     
     #Using the svm classifier to predict for the test set
     y_pred=clf.predict(X_test)
@@ -147,7 +148,7 @@ def Xgboost(tongueColor):
     #Using SVM classifier and fit the classifier with the train dataset
     xb=XGBClassifier()
     xb.fit(X_train,y_train)
-    
+    print(xb)
     #Using the svm classifier to predict for the test set
     y_pred=xb.predict(X_test)
     print('number of sample been predicted: ',len(y_pred))
